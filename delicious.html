@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delicious Bites - Food Ordering Website</title>
+    <style>
+        /* Global Reset and Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff4757;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin-left: 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #ff4757;
+        }
+
+        /* Cart Button in Navbar */
+        .cart-link {
+            background-color: #ff4757;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .cart-link:hover {
+            background-color: #e84118;
+            color: white !important;
+        }
+
+        /* Header / Banner Section */
+        header {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        header a.explore-btn {
+            background-color: #ff4757;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        header a.explore-btn:hover {
+            background-color: #e84118;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Section Titles */
+        h2.section-title {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #333;
+            border-bottom: 3px solid #ff4757;
+            display: table;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 5px;
+        }
+
+        /* Food Grid Layout */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        /* Food Card */
+        .food-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .food-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .food-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .food-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .food-info h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .food-info p {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2ed573;
+            margin-bottom: 15px;
+        }
+
+        .order-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            width: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 0 0 8px 8px;
+            transition: background 0.3s;
+        }
+
+        .order-btn:hover {
+            background-color: #e84118;
+        }
+
+        /* Cart Section Styling */
+        .cart-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .cart-table th, .cart-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-table th {
+            background-color: #333;
+            color: white;
+        }
+
+        .total-price {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .checkout-btn {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background-color: #26af5f;
+        }
+
+        /* Contact Section Styling */
+        .contact-section {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto 50px auto;
+            text-align: center;
+        }
+
+        .contact-section p {
+            font-size: 18px;
+            color: #555;
+            margin: 15px 0;
+        }
+
+        .contact-section a {
+            color: #ff4757;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .contact-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* About Section Styling */
+        .about-section {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-section p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">Delicious Bites</div>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#burgers">Burgers</a></li>
+            <li><a href="#pizzas">Pizzas</a></li>
+            <li><a href="#nonveg">Non-Veg Special</a></li>
+            <li><a href="#drinks">Cold Drinks</a></li>
+            <li><a href="#desserts">Desserts</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#cart" class="cart-link">Cart (<span id="cart-count">0</span>)</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header / Hero Section -->
+    <header id="home">
+        <h1>Fresh & Delicious Food</h1>
+        <p>Order your favorite meals online and get them delivered fast!</p>
+        <a href="#burgers" class="explore-btn">Explore Menu</a>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="container">
+
+        <!-- BURGERS SECTION -->
+        <h2 id="burgers" class="section-title">Delicious Burgers</h2>
+        <div class="food-grid">
+            <!-- Burger 1 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80" alt="Classic Cheese Burger">
+                <div class="food-info">
+                    <h3>Classic Cheese Burger</h3>
+                    <p>Juicy beef patty topped with melting cheddar cheese and fresh lettuce.</p>
+                    <div class="price">₹249</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Classic Cheese Burger', 249)">Add to Cart</button>
+            </div>
+            <!-- Burger 2 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=500&q=80" alt="Double Bacon Burger">
+                <div class="food-info">
+                    <h3>Double Bacon Burger</h3>
+                    <p>Two beef patties stacked with crispy smoked bacon and special sauce.</p>
+                    <div class="price">₹349</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Double Bacon Burger', 349)">Add to Cart</button>
+            </div>
+            <!-- Burger 3 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=500&q=80" alt="Crispy Chicken Burger">
+                <div class="food-info">
+                    <h3>Crispy Chicken Burger</h3>
+                    <p>Golden fried chicken fillet with creamy mayo and crunchy pickles.</p>
+                    <div class="price">₹299</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Crispy Chicken Burger', 299)">Add to Cart</button>
+            </div>
+            <!-- Burger 4 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?auto=format&fit=crop&w=500&q=80" alt="Spicy Veggie Burger">
+                <div class="food-info">
+                    <h3>Spicy Veggie Burger</h3>
+                    <p>Flavorful plant-based patty with jalapeños and spicy chipotle mayo.</p>
+                    <div class="price">₹219</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Spicy Veggie Burger', 219)">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- PIZZAS SECTION -->
+        <h2 id="pizzas" class="section-title">Hot & Fresh Pizzas</h2>
+        <div class="food-grid">
+            <!-- Pizza 1 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=500&q=80" alt="Margherita Pizza">
+                <div class="food-info">
+                    <h3>Margherita Pizza</h3>
+                    <p>Classic Italian pizza with fresh mozzarella, ripe tomatoes, and basil.</p>
+                    <div class="price">₹399</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Margherita Pizza', 399)">Add to Cart</button>
+            </div>
+            <!-- Pizza 2 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=500&q=80" alt="Pepperoni Feast">
+                <div class="food-info">
+                    <h3>Pepperoni Feast</h3>
+                    <p>Loaded with savory sliced pepperoni and extra mozzarella cheese.</p>
+                    <div class="price">₹499</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Pepperoni Feast', 499)">Add to Cart</button>
+            </div>
+            <!-- Pizza 3 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=500&q=80" alt="BBQ Chicken Pizza">
+                <div class="food-info">
+                    <h3>BBQ Chicken Pizza</h3>
+                    <p>Grilled chicken pieces, tangy BBQ sauce, red onions, and cilantro.</p>
+                    <div class="price">₹549</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('BBQ Chicken Pizza', 549)">Add to Cart</button>
+            </div>
+            <!-- Pizza 4 (Fixed Image) -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=80" alt="Vegetarian Supreme">
+                <div class="food-info">
+                    <h3>Vegetarian Supreme</h3>
+                    <p>Bell peppers, mushrooms, black olives, onions, and sweet corn.</p>
+                    <div class="price">₹449</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Vegetarian Supreme', 449)">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- NON-VEG SPECIAL SECTION -->
+        <h2 id="nonveg" class="section-title">Non-Veg Specialties</h2>
+        <div class="food-grid">
+            <!-- Non-Veg 1 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&w=500&q=80" alt="Crispy Fried Chicken Wings">
+                <div class="food-info">
+                    <h3>Crispy Fried Chicken Wings</h3>
+                    <p>Juicy chicken wings fried to golden perfection with spicy dipping sauce.</p>
+                    <div class="price">₹349</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Crispy Fried Chicken Wings', 349)">Add to Cart</button>
+            </div>
+            <!-- Non-Veg 2 (Fixed Image) -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=500&q=80" alt="Spicy Grilled Chicken">
+                <div class="food-info">
+                    <h3>Spicy Grilled Chicken</h3>
+                    <p>Tender chicken breast marinated in herbs and spices, then grilled smoky.</p>
+                    <div class="price">₹429</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Spicy Grilled Chicken', 429)">Add to Cart</button>
+            </div>
+            <!-- Non-Veg 3 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=500&q=80" alt="Chicken Biryani">
+                <div class="food-info">
+                    <h3>Chicken Biryani</h3>
+                    <p>Fragrant basmati rice cooked with succulent chicken pieces and spices.</p>
+                    <div class="price">₹379</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Chicken Biryani', 379)">Add to Cart</button>
+            </div>
+            <!-- Non-Veg 4 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80" alt="Barbecue Ribs">
+                <div class="food-info">
+                    <h3>Barbecue Ribs</h3>
+                    <p>Tender pork ribs glazed in sweet and smoky BBQ sauce, cooked slow.</p>
+                    <div class="price">₹599</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Barbecue Ribs', 599)">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- COLD DRINKS SECTION -->
+        <h2 id="drinks" class="section-title">Refreshing Cold Drinks</h2>
+        <div class="food-grid">
+            <!-- Drink 1 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=500&q=80" alt="Classic Cola">
+                <div class="food-info">
+                    <h3>Classic Cola</h3>
+                    <p>Icy cold, refreshing carbonated cola beverage served with ice.</p>
+                    <div class="price">₹99</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Classic Cola', 99)">Add to Cart</button>
+            </div>
+            <!-- Drink 2 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=500&q=80" alt="Lemon Mint Cooler">
+                <div class="food-info">
+                    <h3>Lemon Mint Cooler</h3>
+                    <p>Zesty fresh lemon juice blended with crisp mint leaves and soda.</p>
+                    <div class="price">₹129</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Lemon Mint Cooler', 129)">Add to Cart</button>
+            </div>
+            <!-- Drink 3 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=500&q=80" alt="Iced Chocolate Shake">
+                <div class="food-info">
+                    <h3>Iced Chocolate Shake</h3>
+                    <p>Thick, creamy chocolate milkshake topped with whipped cream.</p>
+                    <div class="price">₹179</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Iced Chocolate Shake', 179)">Add to Cart</button>
+            </div>
+            <!-- Drink 4 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=500&q=80" alt="Strawberry Smoothie">
+                <div class="food-info">
+                    <h3>Strawberry Smoothie</h3>
+                    <p>Fresh blended strawberries with yogurt and a hint of honey.</p>
+                    <div class="price">₹159</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Strawberry Smoothie', 159)">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- DESSERTS SECTION -->
+        <h2 id="desserts" class="section-title">Sweet Desserts</h2>
+        <div class="food-grid">
+            <!-- Dessert 1 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=500&q=80" alt="Chocolate Brownie">
+                <div class="food-info">
+                    <h3>Chocolate Brownie</h3>
+                    <p>Rich, fudgy chocolate brownie baked with warm chocolate chunks.</p>
+                    <div class="price">₹199</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Chocolate Brownie', 199)">Add to Cart</button>
+            </div>
+            <!-- Dessert 2 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=500&q=80" alt="New York Cheesecake">
+                <div class="food-info">
+                    <h3>New York Cheesecake</h3>
+                    <p>Smooth and creamy classic cheesecake with a buttery graham crust.</p>
+                    <div class="price">₹249</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('New York Cheesecake', 249)">Add to Cart</button>
+            </div>
+            <!-- Dessert 3 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=500&q=80" alt="Classic Tiramisu">
+                <div class="food-info">
+                    <h3>Classic Tiramisu</h3>
+                    <p>Italian coffee-flavored dessert layered with mascarpone cheese.</p>
+                    <div class="price">₹279</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Classic Tiramisu', 279)">Add to Cart</button>
+            </div>
+            <!-- Dessert 4 -->
+            <div class="food-card">
+                <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=500&q=80" alt="Ice Cream Sundae">
+                <div class="food-info">
+                    <h3>Ice Cream Sundae</h3>
+                    <p>Three scoops of vanilla ice cream topped with chocolate syrup and nuts.</p>
+                    <div class="price">₹179</div>
+                </div>
+                <button class="order-btn" onclick="addToCart('Ice Cream Sundae', 179)">Add to Cart</button>
+            </div>
+        </div>
+
+        <!-- CART SECTION -->
+        <h2 id="cart" class="section-title">Your Shopping Cart</h2>
+        <div class="cart-section">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #777;">Your cart is empty.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="total-price">Total: ₹<span id="cart-total">0.00</span></div>
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+
+        <!-- CONTACT US SECTION -->
+        <h2 id="contact" class="section-title">Contact Us</h2>
+        <div class="contact-section">
+            <p><strong>Email:</strong> support@deliciousbites.com</p>
+            <p><strong>Phone:</strong> +91 1234567890</p>
+            <p><strong>Instagram:</strong> <a href="https://instagram.com" target="_blank">@deliciousbites</a></p>
+            <p><strong>Twitter:</strong> <a href="https://twitter.com" target="_blank">@deliciousbites</a></p>
+            <p><strong>Facebook:</strong> <a href="https://facebook.com" target="_blank">DeliciousBitesOfficial</a></p>
+        </div>
+
+        <!-- ABOUT US SECTION -->
+        <h2 id="about" class="section-title">About Us</h2>
+        <div class="about-section">
+            <p>Welcome to <strong>Delicious Bites</strong>! We are passionate about serving you the highest quality food made from fresh ingredients every single day. Whether you're craving a juicy burger, a hot cheesy pizza, a refreshing cold drink, or a sweet dessert, our kitchen is dedicated to bringing restaurant-quality meals straight to your door quickly and reliably.</p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Delicious Bites. All rights reserved.</p>
+    </footer>
+
+    <!-- Simple JavaScript for Cart Functionality -->
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            let existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: name, price: price, quantity: 1 });
+            }
+            updateCart();
+            alert(name + ' added to your cart!');
+        }
+
+        function updateCart() {
+            let cartTableBody = document.getElementById('cart-items');
+            let cartCount = document.getElementById('cart-count');
+            let cartTotal = document.getElementById('cart-total');
+
+            cartTableBody.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #777;">Your cart is empty.</td></tr>';
+                cartCount.innerText = '0';
+                cartTotal.innerText = '0.00';
+                return;
+            }
+
+            let total = 0;
+            let totalCount = 0;
+
+            cart.forEach(item => {
+                let itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                totalCount += item.quantity;
+
+                let row = `<tr>
+                    <td>${item.name}</td>
+                    <td>₹${item.price.toFixed(2)}</td>
+                    <td>${item.quantity}</td>
+                    <td>₹${itemTotal.toFixed(2)}</td>
+                </tr>`;
+                cartTableBody.innerHTML += row;
+            });
+
+            cartCount.innerText = totalCount;
+            cartTotal.innerText = total.toFixed(2);
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty! Please add items before checking out.');
+                return;
+            }
+            alert('Order placed successfully! Thank you for ordering with Delicious Bites.');
+            cart = [];
+            updateCart();
+        }
+    </script>
+
+</body>
+</html>
